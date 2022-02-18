@@ -1,9 +1,9 @@
 <template>
   <transition name="fade">
-    <div v-show="isActive">
-      <div :class="[this.$store.state.isDarkTheme? 'information-content-d' : 'information-content']">
+    <div v-show="isActive" class="container-container">
+      <div class="information-content" :class="[this.$store.state.isDarkTheme? 'dark' : 'light']">
         <h2>{{ currentObject.header }}</h2>
-        <div v-for="i in currentObject.body">
+        <div v-for="i in currentObject.body" class="content-line">
           <b>{{ i }}</b>
         </div>
         <footer>
@@ -29,8 +29,9 @@ export default {
     }
   },
   updated() {
-    this.currentObject = this.$store.state.LessonsList[this.lessonNumber];
-    //console.log(this.currentObject);
+    if (this.isActive) {
+      this.currentObject = this.$store.state.LessonsList[this.lessonNumber];
+    }
   },
   methods: {
     closeLesson() {
@@ -41,21 +42,25 @@ export default {
 </script>
 
 <style scoped>
+* {
+  transition-duration: .1s;
+}
+.container-container {
+  z-index: -1 ;
+}
 .information-content {
   margin-top: 50px;
-  background-color: white;
   position: absolute;
   left: 50%;
   transform: translate(-50%);
   border-radius: 10px;
   padding: 10px;
   font-family: 'Nunito', sans-serif;
-  z-index: 2;
 }
 
 .information-content h2 {
   text-align: center;
-  margin-bottom: 5px;
+  margin-bottom: 20px;
 }
 
 .information-content b {
@@ -67,14 +72,27 @@ export default {
   justify-content: center;
 }
 
+.light {
+  color: black;
+  background-color: white;
+}
+
+.dark {
+  color: #b0b7b6;
+  background-color: black;
+}
+
+.content-line {
+  margin-bottom: 10px;
+}
+
 footer h3 {
   background-color: #008cff;
   color: white;
   padding: 2px 20px 2px 20px;
-  border-radius: 4px;
+  border-radius: 5px;
   margin-top: 10px;
   user-select: none;
-  transition-duration: .2s;
 }
 
 footer h3:hover {
@@ -82,53 +100,13 @@ footer h3:hover {
   cursor: pointer;
 }
 
-.information-content-d {
-  margin-top: 50px;
-  background-color: #3e4444;
-  position: absolute;
-  left: 50%;
-  transform: translate(-50%);
-  border-radius: 10px;
-  padding: 10px;
-  font-family: 'Nunito', sans-serif;
-  z-index: 2;
-}
-
-.information-content-d h2 {
-  text-align: center;
-  margin-bottom: 5px;
-  color: #b0b7b6;
-}
-
-.information-content-d b {
-  font-size: 13px;
-  color: #b0b7b6;
-}
-
-.information-content-d footer {
-  display: flex;
-  justify-content: center;
-}
-
 @media screen and (max-width: 740px) {
   .information-content {
-    background-color: white;
     border-radius: 10px;
     padding: 10px;
     font-family: 'Nunito', sans-serif;
     z-index: 2;
-    max-width: 350px;
-    min-width: 310px;
-  }
-
-  .information-content-d {
-    background-color: #3e4444;
-    border-radius: 10px;
-    padding: 10px;
-    font-family: 'Nunito', sans-serif;
-    z-index: 2;
-    max-width: 350px;
-    min-width: 310px;
+    width: 310px;
   }
 }
 </style>

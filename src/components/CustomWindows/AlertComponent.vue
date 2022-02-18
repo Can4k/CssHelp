@@ -1,6 +1,6 @@
 <template>
-  <div class="alert-container">
-    <strong :style="[type==='or' ? 'color: red' : 'color: black']">{{text}}</strong>
+  <div class="alert-container" :class="[this.$store.state.isDarkTheme ? 'dark' : 'light']" >
+    <strong :style="type === 'warn'? 'color: #ef4343' : 'color: black'">{{text}}</strong>
   </div>
 </template>
 
@@ -16,15 +16,15 @@ export default {
 
 <style scoped>
 .alert-container {
-  z-index: 10;
+  z-index: 5;
   font-size: 15px;
   position: fixed;
-  background-color: #e1e8e7;
-  border-radius: 3px;
+  border-radius: 5px;
   padding: 5px;
   font-family: 'Nunito', sans-serif;
   left: 70%;
   top: 10px;
+  border: 2px solid #ef4343;
 }
 @media screen and (max-width: 700px){
   .alert-container {
@@ -35,6 +35,10 @@ export default {
     transform: translate(-50%);
   }
 }
-strong {
+.dark {
+  background: black;
+}
+.light {
+  background-color: white;
 }
 </style>

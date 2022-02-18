@@ -25,8 +25,7 @@ export default {
 *::-webkit-scrollbar-thumb {
   background-color: #42b983;
 }
-
-* {
-  transition-duration: .5s;
+body {
+  transition-duration: .2s;
 }
 </style>

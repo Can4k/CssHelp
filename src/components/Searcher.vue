@@ -1,10 +1,11 @@
 <template>
   <div class="filter-container">
-    <div class="searcher-container"
-         :class="[this.$store.state.isDarkTheme? 'dark' : 'light']">
+    <div class="searcher-container" :class="[this.$store.state.isDarkTheme? 'dark' : 'light']">
     <span class="tag" v-for="tag in activeTags" :key="tag.name">
-        <strong v-show="this.$store.state.isDarkTheme" :class="[tag.isActive? 'on-tag-d' : 'off-tag-d']" @click="log(tag)">{{tag.name}}</strong>
-        <strong v-show="!this.$store.state.isDarkTheme" :class="[tag.isActive? 'on-tag' : 'off-tag']" @click="log(tag)">{{tag.name}}</strong>
+        <strong @click="tagClicked(tag)"
+                :class="[this.$store.state.isDarkTheme? tag.isActive? 'on-dark'
+                : 'off-dark' : tag.isActive? 'on-light' : 'off-light']">{{tag.name}}
+        </strong>
     </span>
     </div>
   </div>
@@ -22,7 +23,7 @@ export default {
     this.activeTags = this.$store.state.activeTags;
   },
   methods: {
-    log(data) {
+    tagClicked(data) {
       data.isActive = !data.isActive;
       this.$emit("updateList");
     }
@@ -31,18 +32,9 @@ export default {
 </script>
 
 <style scoped>
-.tag strong {
-  font-family: 'Nunito', sans-serif;
-  font-size: 10px;
-  border-radius: 4px;
-  padding: 1px 2px 1px 2px;
-  display: flex;
-  align-items: center;
-  margin: 3px;
-  }
 .searcher-container{
   display: flex;
-  width: 340px;
+  width: 600px;
   background-color: #e1e8e7;
   border-radius: 4px;
   margin: 0;
@@ -63,13 +55,18 @@ export default {
 .tag strong {
   cursor: pointer;
   user-select: none;
-}
-.on-tag {
+  font-size: 12px;
+  font-family: 'Nunito', sans-serif;
+  border-radius: 4px;
+  padding: 1px 2px 1px 2px;
   display: flex;
   align-items: center;
+  margin: 3px;
+}
+.on-light {
   background-color: #42b983;
 }
-.off-tag {
+.off-light {
   display: flex;
   align-items: center;
   background-color: #d6d9d0;
@@ -78,16 +75,18 @@ export default {
   background-color: #292F2F;
   color: black;
 }
-.off-tag-d {
+.off-dark {
   background-color: #4c5656;
-}.on-tag-d {
+}.on-dark {
   color: black;
   background-color: #42b983;
  }
- .close-button {
-   background-color: red;
-   height: 15px;
-   width: 15px;
-   border-radius: 5px;
+ @media screen and (max-width: 700px){
+   .searcher-container {
+     width: 340px;
+   }
+   .tag strong {
+     font-size: 10px;
+   }
  }
 </style>

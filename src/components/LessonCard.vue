@@ -1,8 +1,9 @@
 <template>
-  <div class="lesson-card-default"
-       :class="[this.$store.state.isDarkTheme? 'lesson-card-dark' : 'lesson-card-light']"
-       @click="openLesson">
-    <strong>{{currentObject.header}}</strong>
+  <div class="lesson-card" :class="[this.$store.state.isDarkTheme? 'dark' : 'none']" @click="openLesson">
+    <div class="content-content">
+      <strong>{{currentObject.header}}</strong>
+      <img style="fill: white" :style="[this.$store.state.isDarkTheme? 'background-color: #42b983' : 'background-color: white']" @click.stop="changeClicked" src="@/assets/edit-2.svg" alt="change">
+    </div>
     <div class="lesson-card-body">
       <span class="tag" v-for="tag in currentObject.tags" :key="tag.name">
         <strong>{{tag}}</strong>
@@ -30,8 +31,12 @@ export default {
   },
   methods: {
     openLesson() {
-      //console.log(`Opening the lesson number ${this.cardIndex}`);
       this.$emit("openLesson", {
+        lessonIndex: this.cardIndex
+      })
+    },
+    changeClicked() {
+      this.$emit("changeLesson", {
         lessonIndex: this.cardIndex
       })
     }
@@ -40,46 +45,52 @@ export default {
 </script>
 
 <style scoped>
-.lesson-card-default {
-  color: #2a2a2c;
+.lesson-card {
+  background-color: #e1e8e7;
+  color: black;
   border-radius: 4px;
   padding: 4px;
   margin: 10px;
-  max-width: 340px;
-  max-width: 340px;
-  min-width: 340px;
-  transition-duration: .2s;
+  width: 600px;
 }
-.lesson-card-light {
-  background-color: #e1e8e7;
-  color: black;
-}
-.lesson-card-dark {
+.dark {
   background-color: #292F2F;
   color: #b0b7b6;
 }
-.lesson-card-light:hover{
+.light:hover{
   background-color: #d8d8e1;
   cursor: pointer;
 }
-.lesson-card-dark:hover{
+.dark:hover{
   background-color: #5c6464;
   cursor: pointer;
 }
-.lesson-card-default strong {
-  font-size: 15px;
+.lesson-card strong {
+  font-size: 20px;
   font-family: 'Nunito', sans-serif;
   font-weight: 900;
   user-select: none;
 }
 .tag strong {
   font-family: 'Nunito', sans-serif;
-  font-size: 10px;
+  font-size: 12px;
   background-color: #42b983;
   border-radius: 4px;
   padding: 1px 2px 1px 2px;
-  transition-duration: 0s;
   color: black;
+}
+img {
+  width: 32px;
+  margin-left: 10px;
+  border-radius: 8px;
+  align-self: flex-start;
+  cursor: pointer;
+  padding: 3px;
+}
+.content-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 .tag {
   margin: 1px 2px 1px 2px;
@@ -87,5 +98,16 @@ export default {
 }
 .lesson-card-body {
   display: flex;
+}
+@media screen and (max-width: 700px){
+  .lesson-card {
+    width: 340px;
+  }
+  .lesson-card strong {
+    font-size: 15px;
+  }
+  .tag strong {
+    font-size: 11px;
+  }
 }
 </style>
