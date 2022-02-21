@@ -56,6 +56,7 @@ export default {
   border-radius: 10px;
   padding: 10px;
   font-family: 'Nunito', sans-serif;
+  box-shadow: 0 0 1px #bdbdbd;
 }
 
 .information-content h2 {
@@ -79,7 +80,7 @@ export default {
 
 .dark {
   color: #b0b7b6;
-  background-color: black;
+  background-color: #1f1f1f;
 }
 
 .content-line {

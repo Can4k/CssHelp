@@ -1,16 +1,30 @@
 <template>
   <transition name="fade">
-    <div v-show="isActive">
-      <div class="information-content">
-        <strong style="font-size: 10px; color: red">пока это возможность есть у всех</strong>
+    <div v-show="this.getActive">
+      <div class="information-content" :class="this.$store.state.isDarkTheme? 'dark' : 'light'">
+        <strong style="font-size: 10px; color: red">
+          пока это возможность есть у всех
+        </strong>
         <h2>Добавление тела теории</h2>
-        <textarea v-model="newPost.header" placeholder="HEADER" class="header-input"/>
+        <h3 class="mrg">Заголовок</h3>
+        <textarea v-model="newPost.header"
+                  placeholder="Заголовок"
+                  class="header-input"
+                  :class="[this.$store.state.isDarkTheme? 'dark-input' : 'light-input']"
+        />
+        <h3 class="mrg">Абзацы</h3>
         <div v-for="i in newPost.body.length">
-          <b><textarea v-model="newPost.body[i - 1]" :placeholder="i" class="par-input"/></b>
+          <b><textarea
+              v-model="newPost.body[i - 1]"
+              :placeholder="i"
+              class="par-input"
+              :class="[this.$store.state.isDarkTheme? 'dark-input' : 'light-input']"
+          />
+          </b>
         </div>
         <div class="plus-button">
-          <h4 @click="this.newPost.body.push('')">+1 ПАРАГРАФ</h4>
-          <h4 style="background-color: #e16969; margin-left: 5px" @click="this.newPost.body.pop()">-1 ПАРАГРАФ</h4>
+          <h4 @click="this.newPost.body.push('')">+1 Абзац</h4>
+          <h4 style="background-color: #e16969; margin-left: 5px" @click="this.newPost.body.pop()">-1 Абзац</h4>
         </div>
         <footer>
           <div class="ok-button" style="margin-right: 10px" @click="doPost">
@@ -26,6 +40,8 @@
 </template>
 
 <script>
+import {useRoute} from 'vue-router'
+import router from "@/router";
 export default {
   name: "AdminWindow",
   props: {
@@ -45,8 +61,14 @@ export default {
       }
     }
   },
+  computed: {
+    getActive() {
+      return this.isActive;
+    }
+  },
   methods: {
     closeWindow() {
+      this.$route.query = null;
       this.$emit("closeWindow");
     },
     changePost() {
@@ -62,6 +84,7 @@ export default {
       this.closeWindow();
     },
     doPost() {
+      this.helperActive = true;
       if (this.lessonNumber === -1) {
         this.postPost();
       } else {
@@ -76,7 +99,7 @@ export default {
         body: [],
         header: ""
       },
-      helperList: []
+      helperList: [],
     }
   }
 }
@@ -96,24 +119,33 @@ export default {
   padding: 10px;
   font-family: 'Nunito', sans-serif;
   z-index: 2;
+  box-shadow: 0 0 1px #bdbdbd;
+}
+
+textarea {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 1000;
 }
 
 .header-input {
-  font-size: 13px;
+  font-size: 15px;
   border: 2px solid black;
   border-radius: 10px;
-  padding: 2px;
+  padding: 4px;
   width: 340px;
+  height: 70px;
+  min-height: 70px;
 }
 
 .par-input {
   margin-top: 3px;
-  font-size: 10px;
+  font-size: 12px;
   border: 1px solid black;
   border-radius: 10px;
   padding: 5px;
   width: 340px;
-  height: 40px;
+  height: 50px;
+  min-height: 30px;
 }
 
 .information-content h2 {
@@ -122,6 +154,10 @@ export default {
 
 .information-content b {
   font-size: 13px;
+}
+
+.mrg {
+  margin: 10px;
 }
 
 .information-content footer {
@@ -162,5 +198,19 @@ footer h3 {
 footer h3:hover {
   transform: scale(1.05);
   cursor: pointer;
+}
+.dark {
+  background-color: #292F2F;
+  color: white;
+}
+.light {
+  background-color: white;
+}
+.dark-input {
+  background-color: black;
+  color: #8e9a9a;
+}
+.light-input {
+  background-color: white;
 }
 </style>

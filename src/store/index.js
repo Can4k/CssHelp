@@ -171,7 +171,7 @@ export default createStore({
             }
         ]
     },
-    mutations: {},
-    actions: {},
+    mutations: {}, // масовые изменения мутация
+    actions: {}, // глобальные функции
     modules: {}
 })

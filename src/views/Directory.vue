@@ -5,29 +5,31 @@
     </transition>
     <lesson-window @closeLesson="closeWindow" :is-active="isLessonOpen" :lesson-number="selectedNumber"/>
     <admin-window @closeWindow="closeAdmin" :is-active="isAdminOpen" :lesson-number="selectedNumber"/>
-    <div class="content-list" v-show="!this.isLessonOpen && !this.isAdminOpen">
-      <h2 style="margin-top: 30px" :class="[this.$store.state.isDarkTheme? 'dark-h2' : 'aboba']">Фильтр тегов</h2>
-      <searcher @updateList="updateList"/>
-      <div class="theory-header">
-        <h2 :class="[this.$store.state.isDarkTheme? 'dark-h2' : 'aboba']">Список всей теории</h2>
-        <span @click="openAdmin({})">
+    <transition name="main-fade">
+      <div class="content-list" v-show="!this.isLessonOpen && !this.isAdminOpen">
+        <h2 style="margin-top: 30px" :class="[this.$store.state.isDarkTheme? 'dark-h2' : 'aboba']">Фильтр тегов</h2>
+        <searcher @updateList="updateList"/>
+        <div class="theory-header">
+          <h2 :class="[this.$store.state.isDarkTheme? 'dark-h2' : 'aboba']">Список всей теории</h2>
+          <span @click="openAdmin({})">
           <new-theory-button style="margin-top: 3px"/>
         </span>
+        </div>
+        <div v-show="!currentLessonList.length" class="alert">
+          <strong>нет подходящей теории</strong>
+        </div>
+        <transition-group name="fade">
+          <div v-for="i of this.currentLessonList" class="lessons-container" :key="i.id">
+            <lesson-card
+                v-show="this.currentLessonList.indexOf(i) !== -1"
+                @openLesson="openWindow"
+                @changeLesson="openAdmin"
+                :card-index="i.id"
+            />
+          </div>
+        </transition-group>
       </div>
-      <div v-show="!currentLessonList.length" class="alert">
-        <strong>нет подходящей теории</strong>
-      </div>
-      <div v-for="i of this.currentLessonList" class="lessons-container" :key="i.id">
-        <transition name="fade">
-          <lesson-card
-              v-show="this.currentLessonList.indexOf(i) !== -1"
-              @openLesson="openWindow"
-              @changeLesson="openAdmin"
-              :card-index="i.id"
-          />
-        </transition>
-      </div>
-    </div>
+    </transition>
   </div>
   <div class="telegram-logo">
     <theme-button @changeTheme="changeTheme"/>
@@ -42,6 +44,8 @@ import ThemeButton from "@/components/CustomButtons/ThemeButton";
 import NewTheoryButton from "@/components/CustomButtons/NewTheoryButton";
 import AlertComponent from "@/components/CustomWindows/AlertComponent";
 import AdminWindow from "@/components/CustomWindows/AdminPostWindow";
+import {useRoute} from "vue-router";
+import router from "@/router";
 
 
 export default {
@@ -81,9 +85,12 @@ export default {
     },
     changeTheme() {
       this.$store.state.isDarkTheme = !this.$store.state.isDarkTheme;
-      document.body.style.background = this.$store.state.isDarkTheme ? '#0b1117' : this.isLessonOpen? 'lightgrey' : 'white';
+      document.body.style.background = this.$store.state.isDarkTheme ? '#0b1117' : this.isLessonOpen || this.isAdminOpen? 'lightgrey' : 'white';
     },
     openAdmin(data) {
+      if (!this.$store.state.isDarkTheme) {
+        document.body.style.backgroundColor = "lightgrey";
+      }
       if (data.lessonIndex === undefined) {
         this.selectedNumber = -1;
       } else {
@@ -92,21 +99,11 @@ export default {
       this.isAdminOpen = true;
     },
     closeAdmin() {
-      this.selectedNumber = 0;
       this.isAdminOpen = false;
       if (!this.$store.state.isDarkTheme) {
         document.body.style.backgroundColor = "white";
       }
       this.updateList();
-    },
-    openAlert() {
-      if (this.$store.state.isAdminOpen) {
-        return;
-      }
-      this.$store.state.isAdminOpen = true;
-      setTimeout(() => {
-        this.$store.state.isAdminOpen = false;
-      }, 2000)
     },
   },
   data() {
@@ -121,6 +118,9 @@ export default {
   mounted() {
     this.currentLessonList = this.$store.state.LessonsList;
     this.updateList();
+    if (!this.isAdminOpen && useRoute().query.admin === 'true') {
+      this.openAdmin({});
+    }
   },
 }
 </script>
