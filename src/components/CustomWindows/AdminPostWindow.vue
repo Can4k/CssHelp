@@ -7,11 +7,8 @@
         </strong>
         <h2>Добавление тела теории</h2>
         <h3 class="mrg">Заголовок</h3>
-        <textarea v-model="newPost.header"
-                  placeholder="Заголовок"
-                  class="header-input"
-                  :class="[this.$store.state.isDarkTheme? 'dark-input' : 'light-input']"
-        />
+        <textarea v-model="newPost.header" placeholder="Заголовок" class="header-input"
+                  :class="[this.$store.state.isDarkTheme? 'dark-input' : 'light-input']"/>
         <h3 class="mrg">Абзацы</h3>
         <div v-for="i in newPost.body.length">
           <b><textarea
@@ -40,8 +37,6 @@
 </template>
 
 <script>
-import {useRoute} from 'vue-router'
-import router from "@/router";
 export default {
   name: "AdminWindow",
   props: {
@@ -53,7 +48,7 @@ export default {
   },
   updated() {
     if (this.lessonNumber !== -1) {
-        this.newPost = this.helperList[this.lessonNumber];
+      this.newPost = this.helperList[this.lessonNumber];
     } else {
       this.newPost = {
         body: [],
@@ -199,17 +194,21 @@ footer h3:hover {
   transform: scale(1.05);
   cursor: pointer;
 }
+
 .dark {
   background-color: #292F2F;
   color: white;
 }
+
 .light {
   background-color: white;
 }
+
 .dark-input {
   background-color: black;
   color: #8e9a9a;
 }
+
 .light-input {
   background-color: white;
 }

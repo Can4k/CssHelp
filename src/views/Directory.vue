@@ -45,8 +45,8 @@ import NewTheoryButton from "@/components/CustomButtons/NewTheoryButton";
 import AlertComponent from "@/components/CustomWindows/AlertComponent";
 import AdminWindow from "@/components/CustomWindows/AdminPostWindow";
 import {useRoute} from "vue-router";
-import router from "@/router";
 
+const externalModules = require("@/modules/directoryModules");
 
 export default {
   name: "Directory",
