@@ -1,29 +1,57 @@
 <template>
   <div class="main-container">
+
     <transition :name="this.$store.state.deviceWidth > 700? 'alert' : 'alert-smart'">
-      <alert-component v-show="this.$store.state.isAdminOpen" text="Добавлять посты может только админ" type="warn"/>
+      <alert-component
+          v-show="this.$store.state.isAdminOpen"
+          text="Добавлять посты может только админ"
+          type="warn"
+      />
     </transition>
-    <lesson-window @closeLesson="closeWindow" :is-active="isLessonOpen" :lesson-number="selectedNumber"/>
-    <admin-window @closeWindow="closeAdmin" :is-active="isAdminOpen" :lesson-number="selectedNumber"/>
+
+    <transition name="fade">
+      <lesson-window
+          v-if="isLessonOpen"
+          :is-active="isLessonOpen"
+          @closeLesson="closeWindow"
+          :lesson-number="selectedNumber"
+      />
+    </transition>
+
+    <transition name="fade">
+      <admin-window
+          class="admin"
+          v-if="isAdminOpen"
+          @closeWindow="closeAdmin"
+          :is-active="isAdminOpen"
+          :lesson-number="selectedNumber"
+      />
+    </transition>
+
     <transition name="main-fade">
-      <div class="content-list" v-show="!this.isLessonOpen && !this.isAdminOpen">
-        <h2 style="margin-top: 30px" :class="[this.$store.state.isDarkTheme? 'dark-h2' : 'aboba']">Фильтр тегов</h2>
+      <div class="content-list" :style="[(isAdminOpen || isLessonOpen)? 'opacity: 0.15' : '']">
+
+        <h2 style="margin-top: 30px" :class="[this.$store.state.isDarkTheme? 'dark-h2' : 'none']">Фильтр тегов</h2>
         <searcher @updateList="updateList"/>
+
         <div class="theory-header">
-          <h2 :class="[this.$store.state.isDarkTheme? 'dark-h2' : 'aboba']">Список всей теории</h2>
-          <span @click="openAdmin({})">
-          <new-theory-button style="margin-top: 3px"/>
-        </span>
+          <h2 :class="[this.$store.state.isDarkTheme? 'dark-h2' : 'none']">Список всей теории</h2>
+          <span @click="openAdmin({lessonIndex: -1})">
+            <new-theory-button style="margin-top: 3px"/>
+          </span>
         </div>
+
         <div v-show="!currentLessonList.length" class="alert">
           <strong>нет подходящей теории</strong>
         </div>
+
         <transition-group name="fade">
           <div v-for="i of this.currentLessonList" class="lessons-container" :key="i.id">
             <lesson-card
                 v-show="this.currentLessonList.indexOf(i) !== -1"
                 @openLesson="openWindow"
                 @changeLesson="openAdmin"
+                @deleteLesson="deleteLesson"
                 :card-index="i.id"
             />
           </div>
@@ -31,7 +59,7 @@
       </div>
     </transition>
   </div>
-  <div class="telegram-logo">
+  <div class="change-theme">
     <theme-button @changeTheme="changeTheme"/>
   </div>
 </template>
@@ -46,24 +74,27 @@ import AlertComponent from "@/components/CustomWindows/AlertComponent";
 import AdminWindow from "@/components/CustomWindows/AdminPostWindow";
 import {useRoute} from "vue-router";
 
-const externalModules = require("@/modules/directoryModules");
-
 export default {
   name: "Directory",
   components: {AdminWindow, AlertComponent, NewTheoryButton, ThemeButton, Searcher, LessonWindow, LessonCard},
   methods: {
     openWindow(data) {
+      if (this.isLessonOpen || this.isAdminOpen) {
+        return;
+      }
       this.selectedNumber = data.lessonIndex;
       this.isLessonOpen = true;
       if (!this.$store.state.isDarkTheme) {
-        document.body.style.backgroundColor = "lightgrey";
+        document.body.style.backgroundColor = this.adminBackground;
       }
+      this.correctWindow();
     },
     closeWindow() {
       this.isLessonOpen = false;
       if (!this.$store.state.isDarkTheme) {
         document.body.style.backgroundColor = "white";
       }
+      this.updateList();
     },
     updateList() {
       this.currentTagsList = [];
@@ -85,18 +116,18 @@ export default {
     },
     changeTheme() {
       this.$store.state.isDarkTheme = !this.$store.state.isDarkTheme;
-      document.body.style.background = this.$store.state.isDarkTheme ? '#0b1117' : this.isLessonOpen || this.isAdminOpen? 'lightgrey' : 'white';
+      document.body.style.background = this.$store.state.isDarkTheme ? '#0b1117' : this.isLessonOpen || this.isAdminOpen ? this.adminBackground : 'white';
     },
     openAdmin(data) {
+      if (this.isLessonOpen || this.isAdminOpen) {
+        return;
+      }
       if (!this.$store.state.isDarkTheme) {
-        document.body.style.backgroundColor = "lightgrey";
+        document.body.style.backgroundColor = this.adminBackground;
       }
-      if (data.lessonIndex === undefined) {
-        this.selectedNumber = -1;
-      } else {
-        this.selectedNumber = data.lessonIndex;
-      }
+      this.selectedNumber = data.lessonIndex;
       this.isAdminOpen = true;
+      this.correctWindow();
     },
     closeAdmin() {
       this.isAdminOpen = false;
@@ -105,6 +136,21 @@ export default {
       }
       this.updateList();
     },
+    deleteLesson(data) {
+      let oldList = this.$store.state.LessonsList, index = data.lessonIndex, newList = [];
+      for (let el of oldList) {
+        if (el.id !== index) {
+          newList.push(el);
+        }
+      }
+      this.$store.state.LessonsList = newList;
+      this.updateList();
+    },
+    correctWindow() {
+      setTimeout(() => {
+        document.getElementsByClassName('information-content')[0].style.top = (window.scrollY + 20).toString() + "px";
+      }, 10)
+    }
   },
   data() {
     return {
@@ -113,6 +159,7 @@ export default {
       selectedNumber: 0,
       currentLessonList: {},
       currentTagsList: [],
+      adminBackground: 'rgba(234,241,248,0.91)',
     }
   },
   mounted() {
@@ -150,47 +197,22 @@ export default {
   display: flex;
 }
 
-.theory-header{
+.theory-header {
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.telegram-logo {
+.change-theme {
   position: fixed;
   left: 4px;
   top: 4px;
   display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.telegram-logo img {
-  margin: 4px;
-}
-
-.telegram-logo strong {
-  font-family: 'Nunito', sans-serif;
-  font-weight: 1000;
-  font-size: 10px;
-  color: black;
-}
-
-.telegram-logo-dark {
-  color: #e1e8e7;
 }
 
 a:visited {
   text-decoration: none;
   color: #008cff;
-}
-
-.telegram-logo-dark strong {
-  color: white;
-}
-
-.telegram-logo-dark strong {
-  color: white;
 }
 
 a:hover {
@@ -220,22 +242,32 @@ a {
 .fade-leave-to {
   opacity: 0;
 }
+
 .alert-enter-to {
   top: 10px;
 }
+
 .alert-enter-from {
   top: -50px;
 }
+
 .alert-leave-to {
   margin-top: -50px;
 }
+
 .alert-smart-enter-to {
   top: 5px;
 }
+
 .alert-smart-enter-from {
   top: -20px;
 }
+
 .alert-smart-leave-to {
   margin-top: -30px;
+}
+
+.content-list {
+  transition-duration: 0s;
 }
 </style>

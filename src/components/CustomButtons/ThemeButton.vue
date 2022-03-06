@@ -20,7 +20,7 @@ export default {
   transition-duration: .4s;
 }
 .theme-button-container {
-  z-index: 100;
+  z-index: 10;
   color: white;
   font-family: 'Nunito', sans-serif;
   font-size: 15px;

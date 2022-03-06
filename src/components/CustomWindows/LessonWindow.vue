@@ -1,19 +1,17 @@
 <template>
-  <transition name="fade">
-    <div v-show="isActive" class="container-container">
-      <div class="information-content" :class="[this.$store.state.isDarkTheme? 'dark' : 'light']">
-        <h2>{{ currentObject.header }}</h2>
-        <div v-for="i in currentObject.body" class="content-line">
-          <b>{{ i }}</b>
-        </div>
-        <footer>
-          <div class="ok-button" @click="closeLesson">
-            <h3>ОК</h3>
-          </div>
-        </footer>
+  <div class="container-container">
+    <div class="information-content" :class="[this.$store.state.isDarkTheme? 'dark' : 'light']">
+      <h2>{{ currentObject.header }}</h2>
+      <div v-for="i in currentObject.body" class="content-line">
+        <b>{{ i }}</b>
       </div>
+      <footer>
+        <div class="ok-button" @click="closeLesson">
+          <h3>ОК</h3>
+        </div>
+      </footer>
     </div>
-  </transition>
+  </div>
 </template>
 
 <script>
@@ -25,17 +23,26 @@ export default {
   },
   data() {
     return {
-      currentObject: {}
+      currentObject: {},
+      startY: 0
     }
   },
-  updated() {
-    if (this.isActive) {
-      this.currentObject = this.$store.state.LessonsList[this.lessonNumber];
-    }
+  mounted() {
+    this.startY = scrollY;
+    window.addEventListener("scroll", this.blockScroll);
+    this.currentObject = this.$store.state.LessonsList[this.lessonNumber];
+  },
+  unmounted() {
+    window.removeEventListener("scroll", this.blockScroll);
   },
   methods: {
     closeLesson() {
       this.$emit("closeLesson");
+    },
+    blockScroll() {
+      if (this.startY > scrollY && this.isActive) {
+        window.scroll({top: this.startY, behavior: "auto"})
+      }
     }
   }
 }
@@ -45,9 +52,11 @@ export default {
 * {
   transition-duration: .1s;
 }
+
 .container-container {
-  z-index: -1 ;
+  z-index: 10;
 }
+
 .information-content {
   margin-top: 50px;
   position: absolute;

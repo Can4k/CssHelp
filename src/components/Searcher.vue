@@ -35,7 +35,8 @@ export default {
 .searcher-container{
   display: flex;
   width: 600px;
-  background-color: #e1e8e7;
+  background-color: white;
+  box-shadow: 0 4px 50px -12px rgba(17, 12, 46, 0.16);
   border-radius: 4px;
   margin: 0;
   flex-wrap: wrap;
@@ -69,7 +70,7 @@ export default {
 .off-light {
   display: flex;
   align-items: center;
-  background-color: #d6d9d0;
+  background-color: rgba(190, 185, 185, 0.28);
 }
 .dark {
   background-color: #292F2F;

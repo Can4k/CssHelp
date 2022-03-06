@@ -1,42 +1,42 @@
 <template>
-  <transition name="fade">
-    <div v-show="this.getActive">
-      <div class="information-content" :class="this.$store.state.isDarkTheme? 'dark' : 'light'">
-        <strong style="font-size: 10px; color: red">
-          пока это возможность есть у всех
-        </strong>
-        <h2>Добавление тела теории</h2>
-        <h3 class="mrg">Заголовок</h3>
-        <textarea v-model="newPost.header" placeholder="Заголовок" class="header-input"
-                  :class="[this.$store.state.isDarkTheme? 'dark-input' : 'light-input']"/>
-        <h3 class="mrg">Абзацы</h3>
-        <div v-for="i in newPost.body.length">
-          <b><textarea
-              v-model="newPost.body[i - 1]"
-              :placeholder="i"
-              class="par-input"
-              :class="[this.$store.state.isDarkTheme? 'dark-input' : 'light-input']"
-          />
-          </b>
-        </div>
-        <div class="plus-button">
-          <h4 @click="this.newPost.body.push('')">+1 Абзац</h4>
-          <h4 style="background-color: #e16969; margin-left: 5px" @click="this.newPost.body.pop()">-1 Абзац</h4>
-        </div>
-        <footer>
-          <div class="ok-button" style="margin-right: 10px" @click="doPost">
-            <h3>ОК</h3>
-          </div>
-          <div class="ok-button" @click="closeWindow">
-            <h3 style="background-color: #e53939">ОТМЕНА</h3>
-          </div>
-        </footer>
+  <div class="main-admin-post">
+    <div class="information-content" :class="this.$store.state.isDarkTheme? 'dark' : 'light'" style="top: 10px">
+      <strong style="font-size: 10px; color: red">
+        пока это возможность есть у всех
+      </strong>
+      <h2>Добавление тела теории</h2>
+      <h3 class="mrg">Заголовок</h3>
+      <textarea v-model="newPost.header" placeholder="Заголовок" class="header-input" :class="[this.$store.state.isDarkTheme? 'dark-input' : 'light-input']"/>
+      <h3 class="mrg">Абзацы</h3>
+      <div v-for="i in newPost.body.length">
+        <b>
+            <textarea
+                v-model="newPost.body[i - 1]"
+                :placeholder="i"
+                class="par-input"
+                :class="[this.$store.state.isDarkTheme? 'dark-input' : 'light-input']"
+            />
+        </b>
       </div>
+      <div class="plus-button">
+        <h4 @click="this.newPost.body.push('')">Добавить абзац</h4>
+        <h4 style="background-color: #e16969; margin-left: 5px" @click="this.newPost.body.pop()">Удалить абзац</h4>
+      </div>
+      <footer>
+        <div class="ok-button" style="margin-right: 10px" @click="doPost">
+          <h3>ОК</h3>
+        </div>
+        <div class="ok-button" @click="closeWindow">
+          <h3 style="background-color: #e53939">ОТМЕНА</h3>
+        </div>
+      </footer>
     </div>
-  </transition>
+  </div>
 </template>
 
 <script>
+import router from "@/router";
+
 export default {
   name: "AdminWindow",
   props: {
@@ -44,9 +44,9 @@ export default {
     lessonNumber: Number,
   },
   mounted() {
+    this.startY = scrollY;
+    window.addEventListener("scroll", this.blockScroll);
     this.helperList = this.$store.state.LessonsList;
-  },
-  updated() {
     if (this.lessonNumber !== -1) {
       this.newPost = this.helperList[this.lessonNumber];
     } else {
@@ -56,6 +56,9 @@ export default {
       }
     }
   },
+  unmounted() {
+    window.removeEventListener("scroll", this.blockScroll)
+  },
   computed: {
     getActive() {
       return this.isActive;
@@ -63,7 +66,7 @@ export default {
   },
   methods: {
     closeWindow() {
-      this.$route.query = null;
+      router.replace("/");
       this.$emit("closeWindow");
     },
     changePost() {
@@ -79,11 +82,15 @@ export default {
       this.closeWindow();
     },
     doPost() {
-      this.helperActive = true;
       if (this.lessonNumber === -1) {
         this.postPost();
       } else {
         this.changePost();
+      }
+    },
+    blockScroll() {
+      if (this.startY > scrollY && this.isActive) {
+        window.scroll({top: this.startY, behavior: "auto"})
       }
     }
   },
@@ -95,12 +102,17 @@ export default {
         header: ""
       },
       helperList: [],
+      startY: 0
     }
   }
 }
 </script>
 
 <style scoped>
+.main-admin-post {
+  z-index: 10;
+}
+
 .information-content {
   position: absolute;
   left: 50%;
@@ -108,7 +120,6 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 50px;
   background-color: white;
   border-radius: 10px;
   padding: 10px;

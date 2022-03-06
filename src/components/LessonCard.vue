@@ -2,18 +2,23 @@
   <div class="lesson-card" :class="[this.$store.state.isDarkTheme? 'dark' : 'none']" @click="openLesson">
     <div class="content-content">
       <strong>{{ currentObject.header }}</strong>
+      <span>
+        <img
+            style="background-color: #42b983"
+            @click.stop="changeClicked"
+            src="@/assets/edit-2.svg"
+            alt="change"
+        >
       <img
-          :style="[this.$store.state.isDarkTheme? 'background-color: #42b983' : 'background-color: white']"
-          @click.stop="changeClicked"
-          src="@/assets/edit-2.svg"
+          style="background-color: rgba(255,103,103,0.82)"
+          @click.stop="deleteLesson"
+          src="@/assets/trash.svg"
           alt="change"
       >
+      </span>
     </div>
     <div class="lesson-card-body">
-      <span class="tag"
-            v-for="tag in currentObject.tags"
-            :key="tag.name"
-      >
+      <span class="tag" v-for="tag in currentObject.tags" :key="tag.name">
       <strong>{{ tag }}</strong>
       </span>
     </div>
@@ -34,9 +39,11 @@ export default {
   mounted() {
     this.currentObject = this.$store.state.LessonsList[this.cardIndex];
   },
-  updated() {
+  /*
+    updated() {
     this.currentObject = this.$store.state.LessonsList[this.cardIndex];
-  },
+    },
+  */
   methods: {
     openLesson() {
       this.$emit("openLesson", {
@@ -47,6 +54,11 @@ export default {
       this.$emit("changeLesson", {
         lessonIndex: this.cardIndex
       })
+    },
+    deleteLesson() {
+      this.$emit("deleteLesson", {
+        lessonIndex: this.cardIndex
+      })
     }
   }
 }
@@ -55,12 +67,12 @@ export default {
 <style scoped>
 .lesson-card {
   cursor: pointer;
-  background-color: #e1e8e7;
   color: black;
   border-radius: 4px;
   padding: 4px;
   margin: 10px;
   width: 600px;
+  box-shadow: 0 4px 50px -12px rgba(17, 12, 46, 0.16);
 }
 
 .dark {
@@ -95,8 +107,8 @@ export default {
 }
 
 img {
-  width: 32px;
-  margin-left: 10px;
+  width: 24px;
+  margin-left: 5px;
   border-radius: 8px;
   align-self: flex-start;
   cursor: pointer;
