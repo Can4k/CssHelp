@@ -46,9 +46,16 @@ export default {
   mounted() {
     this.startY = scrollY;
     window.addEventListener("scroll", this.blockScroll);
+
     this.helperList = this.$store.state.LessonsList;
+
     if (this.lessonNumber !== -1) {
-      this.newPost = this.helperList[this.lessonNumber];
+      for (let i of this.helperList) {
+        if (i.id === this.lessonNumber) {
+          this.newPost = i;
+          break;
+        }
+      }
     } else {
       this.newPost = {
         body: [],
@@ -73,10 +80,12 @@ export default {
       this.closeWindow();
     },
     postPost() {
+      const TIME = new Date();
+      let ID = TIME.getTime() % 1024;
       this.$store.state.LessonsList.push({
         body: this.newPost.body,
         header: this.newPost.header,
-        id: this.$store.state.LessonsList.length,
+        id: ID,
         tags: []
       });
       this.closeWindow();

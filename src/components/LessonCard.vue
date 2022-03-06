@@ -37,7 +37,12 @@ export default {
     }
   },
   mounted() {
-    this.currentObject = this.$store.state.LessonsList[this.cardIndex];
+    for (let i of this.$store.state.LessonsList) {
+      if (i.id === this.cardIndex) {
+        this.currentObject = i;
+        break;
+      }
+    }
   },
   /*
     updated() {

@@ -30,7 +30,12 @@ export default {
   mounted() {
     this.startY = scrollY;
     window.addEventListener("scroll", this.blockScroll);
-    this.currentObject = this.$store.state.LessonsList[this.lessonNumber];
+    for (let i of this.$store.state.LessonsList) {
+      if (i.id === this.lessonNumber) {
+        this.currentObject = i;
+        break;
+      }
+    }
   },
   unmounted() {
     window.removeEventListener("scroll", this.blockScroll);

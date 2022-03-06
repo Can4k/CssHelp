@@ -48,7 +48,7 @@
         <transition-group name="fade">
           <div v-for="i of this.currentLessonList" class="lessons-container" :key="i.id">
             <lesson-card
-                v-show="this.currentLessonList.indexOf(i) !== -1"
+                v-show="true || this.currentLessonList.indexOf(i) !== -1"
                 @openLesson="openWindow"
                 @changeLesson="openAdmin"
                 @deleteLesson="deleteLesson"
@@ -109,7 +109,7 @@ export default {
         for (let j = 0; j < this.currentTagsList.length; j++) {
           flag |= (this.$store.state.LessonsList[i].tags.indexOf(this.currentTagsList[j]) === -1);
         }
-        if (flag == 0) {
+        if (!flag) {
           this.currentLessonList.push(this.$store.state.LessonsList[i]);
         }
       }
@@ -138,12 +138,19 @@ export default {
     },
     deleteLesson(data) {
       let oldList = this.$store.state.LessonsList, index = data.lessonIndex, newList = [];
+      let oldCurrent = this.currentLessonList, newCurrentList = [];
       for (let el of oldList) {
         if (el.id !== index) {
           newList.push(el);
         }
       }
+      for (let el of oldCurrent) {
+        if (el.id !== index) {
+          newCurrentList.push(el);
+        }
+      }
       this.$store.state.LessonsList = newList;
+      this.currentLessonList = newCurrentList;
       this.updateList();
     },
     correctWindow() {
