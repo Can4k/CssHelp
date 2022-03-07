@@ -24,8 +24,8 @@
           </b>
         </div>
         <div class="plus-button">
-          <h4 @click="this.newPost.body.push('')">Добавить абзац</h4>
-          <h4 style="background-color: #e16969; margin-left: 5px" @click="this.newPost.body.pop()">Удалить абзац</h4>
+          <h4 @click="addParagraph">Добавить абзац</h4>
+          <h4 style="background-color: #e16969; margin-left: 5px" @click="removeParagraph">Удалить абзац</h4>
         </div>
       </div>
 
@@ -60,6 +60,7 @@ export default {
     lessonNumber: Number,
   },
   mounted() {
+    document.getElementsByClassName("header-input")[0].focus();
     this.startY = scrollY;
     window.addEventListener("scroll", this.blockScroll);
     if (this.lessonNumber !== -1) {
@@ -151,6 +152,20 @@ export default {
     blockScroll() {
       if (this.startY > scrollY && this.isActive) {
         window.scroll({top: this.startY, behavior: "auto"})
+      }
+    },
+    addParagraph() {
+      this.newPost.body.push('');
+      setTimeout(() => {
+        document.getElementsByClassName('par-input')[this.newPost.body.length - 1].focus();
+      }, 10)
+    },
+    removeParagraph() {
+      this.newPost.body.pop();
+      if (this.newPost.body.length) {
+        setTimeout(() => {
+          document.getElementsByClassName('par-input')[this.newPost.body.length - 1].focus();
+        }, 10)
       }
     }
   },

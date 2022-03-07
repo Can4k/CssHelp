@@ -156,10 +156,11 @@ export default {
     correctWindow() {
       setTimeout(() => {
         document.getElementsByClassName('information-content')[0].style.top = (window.scrollY + 20).toString() + "px";
-      }, 10)
+      }, 1)
     },
     userVerification() {
       if (localStorage.getItem('isAdmin') === 'true') {
+        document.title = "CSS helper Admin"
         this.$store.state.isUserAdmin = true;
       }
     }
