@@ -11,6 +11,11 @@ export default {
   methods: {
     clicked() {
       this.$emit("changeTheme");
+    },
+  },
+  data() {
+    return {
+      isHovered: false
     }
   }
 }
@@ -29,10 +34,10 @@ export default {
   cursor: pointer;
   user-select: none;
 }
-.dark {
-  background-color: rgba(255, 255, 255, 0.66);
+img {
+  transition: .4s ease-in-out;
 }
-.white {
-  background-color: rgba(0, 0, 0, 0.61);
+img:hover {
+  transform: rotate(360deg);
 }
 </style>

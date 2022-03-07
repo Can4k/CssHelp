@@ -59,8 +59,11 @@
       </div>
     </transition>
   </div>
-  <div class="change-theme">
-    <theme-button @changeTheme="changeTheme"/>
+  <div class="change-theme" style="margin-right: 10px">
+    <theme-button @changeTheme="changeTheme" style="margin-right: 10px"/>
+    <a style="display: flex; justify-content: center; align-items: center" href="https://github.com/Can4k/helper228" target="_blank">
+      <img class="github" src="@/assets/github.svg" alt="123"/>
+    </a>
   </div>
 </template>
 
@@ -223,6 +226,10 @@ export default {
   top: 4px;
   display: flex;
   z-index: 20;
+  background-color: white;
+  padding: 5px;
+  box-shadow: 0 4px 50px -5px rgba(17, 12, 46, 0.16);
+  border-radius: 10px;
 }
 
 a:visited {
@@ -280,6 +287,14 @@ a {
 
 .alert-smart-leave-to {
   margin-top: -30px;
+}
+
+.github {
+  transition-duration: .3s;
+}
+
+.github:hover {
+  transform: scale(1.1);
 }
 
 .content-list {
