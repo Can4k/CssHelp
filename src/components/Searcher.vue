@@ -66,11 +66,13 @@ export default {
 }
 .on-light {
   background-color: #42b983;
+  transition-duration: .1s;
 }
 .off-light {
   display: flex;
   align-items: center;
   background-color: rgba(190, 185, 185, 0.28);
+  transition-duration: .1s;
 }
 .dark {
   background-color: #292F2F;
@@ -78,9 +80,11 @@ export default {
 }
 .off-dark {
   background-color: #4c5656;
+  transition-duration: .1s;
 }.on-dark {
   color: black;
   background-color: #42b983;
+  transition-duration: .1s;
  }
  @media screen and (max-width: 700px){
    .searcher-container {

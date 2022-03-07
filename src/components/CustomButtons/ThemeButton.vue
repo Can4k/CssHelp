@@ -1,7 +1,8 @@
 <template>
-  <span @click="clicked" class="theme-button-container" :class="[this.$store.state.isDarkTheme? 'dark' : 'white']">
-    <strong>{{this.$store.state.isDarkTheme? "В ДЕНЬ" : "В НОЧЬ"}}</strong>
-  </span>
+  <div @click="clicked" class="theme-button-container" :class="[this.$store.state.isDarkTheme? 'dark' : 'white']">
+    <img v-if="this.$store.state.isDarkTheme" src="@/assets/sun.svg" alt="В ДЕНЬ">
+    <img v-else src="@/assets/moon.svg" alt="В ДЕНЬ">
+  </div>
 </template>
 
 <script>
@@ -16,28 +17,22 @@ export default {
 </script>
 
 <style scoped>
-* {
-  transition-duration: .4s;
-}
 .theme-button-container {
-  z-index: 10;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   color: white;
   font-family: 'Nunito', sans-serif;
   font-size: 15px;
-  border-radius: 4px;
-  margin: 2px;
+  border-radius: 20px;
   padding: 4px;
   cursor: pointer;
   user-select: none;
 }
 .dark {
-  color: black;
-  box-shadow: 0 0 20px white;
-  background-color: white;
+  background-color: rgba(255, 255, 255, 0.66);
 }
 .white {
-  color: white;
-  box-shadow: 0 0 20px black;
-  background-color: black;
+  background-color: rgba(0, 0, 0, 0.61);
 }
 </style>

@@ -132,7 +132,7 @@ img {
 }
 
 .lesson-card-body {
-  display: flex;
+  display: flex;;
 }
 
 @media screen and (max-width: 700px) {
@@ -142,6 +142,7 @@ img {
 
   .lesson-card strong {
     font-size: 15px;
+    max-width: 250px;
   }
 
   .tag strong {

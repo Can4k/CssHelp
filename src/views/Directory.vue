@@ -23,13 +23,14 @@
           class="admin"
           v-if="isAdminOpen"
           @closeWindow="closeAdmin"
+          @deleteLesson="deleteLesson"
           :is-active="isAdminOpen"
           :lesson-number="selectedNumber"
       />
     </transition>
 
     <transition name="main-fade">
-      <div class="content-list" :style="[(isAdminOpen || isLessonOpen)? 'opacity: 0.15' : '']">
+      <div class="content-list" :style="[(isAdminOpen || isLessonOpen)? 'opacity: 0.05' : '']">
 
         <h2 style="margin-top: 30px" :class="[this.$store.state.isDarkTheme? 'dark-h2' : 'none']">Фильтр тегов</h2>
         <searcher @updateList="updateList"/>
@@ -37,7 +38,7 @@
         <div class="theory-header">
           <h2 :class="[this.$store.state.isDarkTheme? 'dark-h2' : 'none']">Список всей теории</h2>
           <span @click="openAdmin({lessonIndex: -1})">
-            <new-theory-button style="margin-top: 3px"/>
+            <new-theory-button style="margin-top: 8px"/>
           </span>
         </div>
 
@@ -48,7 +49,6 @@
         <transition-group name="fade">
           <div v-for="i of this.currentLessonList" class="lessons-container" :key="i.id">
             <lesson-card
-                v-show="true || this.currentLessonList.indexOf(i) !== -1"
                 @openLesson="openWindow"
                 @changeLesson="openAdmin"
                 @deleteLesson="deleteLesson"
@@ -166,7 +166,7 @@ export default {
       selectedNumber: 0,
       currentLessonList: {},
       currentTagsList: [],
-      adminBackground: 'rgba(234,241,248,0.91)',
+      adminBackground: 'rgb(234,241,248)',
     }
   },
   mounted() {
@@ -212,9 +212,10 @@ export default {
 
 .change-theme {
   position: fixed;
-  left: 4px;
+  right: 4px;
   top: 4px;
   display: flex;
+  z-index: 20;
 }
 
 a:visited {

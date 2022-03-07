@@ -168,7 +168,7 @@ export default createStore({
             {
                 name: "Transform",
                 isActive: false
-            }
+            },
         ]
     },
     mutations: {}, // масовые изменения мутация

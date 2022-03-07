@@ -1,33 +1,47 @@
 <template>
   <div class="main-admin-post">
+
+    <transition name="fade">
+      <alert-component id="alert" v-show="this.areAllFieldsNotEmpty && !this.areAllFieldsEmpty" text="Все поля должны быть заполнены" :type="'warn'"/>
+    </transition>
+
     <div class="information-content" :class="this.$store.state.isDarkTheme? 'dark' : 'light'" style="top: 10px">
-      <strong style="font-size: 10px; color: red">
-        пока это возможность есть у всех
-      </strong>
       <h2>Добавление тела теории</h2>
       <h3 class="mrg">Заголовок</h3>
-      <textarea v-model="newPost.header" placeholder="Заголовок" class="header-input" :class="[this.$store.state.isDarkTheme? 'dark-input' : 'light-input']"/>
-      <h3 class="mrg">Абзацы</h3>
-      <div v-for="i in newPost.body.length">
-        <b>
+      <textarea v-model="newPost.header" placeholder="Заголовок" class="header-input"
+                :class="[this.$store.state.isDarkTheme? 'dark-input' : 'light-input']"/>
+
+      <div class="add-paragraphs">
+        <h3 class="mrg">Абзацы</h3>
+        <div v-for="i in newPost.body.length">
+          <b>
             <textarea
                 v-model="newPost.body[i - 1]"
                 :placeholder="i"
                 class="par-input"
                 :class="[this.$store.state.isDarkTheme? 'dark-input' : 'light-input']"
             />
-        </b>
-      </div>
-      <div class="plus-button">
-        <h4 @click="this.newPost.body.push('')">Добавить абзац</h4>
-        <h4 style="background-color: #e16969; margin-left: 5px" @click="this.newPost.body.pop()">Удалить абзац</h4>
-      </div>
-      <footer>
-        <div class="ok-button" style="margin-right: 10px" @click="doPost">
-          <h3>ОК</h3>
+          </b>
         </div>
-        <div class="ok-button" @click="closeWindow">
-          <h3 style="background-color: #e53939">ОТМЕНА</h3>
+        <div class="plus-button">
+          <h4 @click="this.newPost.body.push('')">Добавить абзац</h4>
+          <h4 style="background-color: #e16969; margin-left: 5px" @click="this.newPost.body.pop()">Удалить абзац</h4>
+        </div>
+      </div>
+
+      <div class="add-tags">
+        <h3 class="mrg">Тэги</h3>
+        <strong style="font-size: 10px">введите нужные теги через запятую без пробела</strong>
+        <textarea
+            v-model="newPost.tags"
+            class="par-input"
+            :class="[this.$store.state.isDarkTheme? 'dark-input' : 'light-input']"
+        />
+      </div>
+
+      <footer>
+        <div class="ok-button" @click="doPost">
+          <h3>ОК</h3>
         </div>
       </footer>
     </div>
@@ -36,9 +50,11 @@
 
 <script>
 import router from "@/router";
+import AlertComponent from "@/components/CustomWindows/AlertComponent";
 
 export default {
   name: "AdminWindow",
+  components: {AlertComponent},
   props: {
     isActive: Boolean,
     lessonNumber: Number,
@@ -46,11 +62,8 @@ export default {
   mounted() {
     this.startY = scrollY;
     window.addEventListener("scroll", this.blockScroll);
-
-    this.helperList = this.$store.state.LessonsList;
-
     if (this.lessonNumber !== -1) {
-      for (let i of this.helperList) {
+      for (let i of this.$store.state.LessonsList) {
         if (i.id === this.lessonNumber) {
           this.newPost = i;
           break;
@@ -59,40 +72,78 @@ export default {
     } else {
       this.newPost = {
         body: [],
-        header: ""
+        header: "",
+        tags: "",
       }
     }
   },
   unmounted() {
     window.removeEventListener("scroll", this.blockScroll)
   },
-  computed: {
-    getActive() {
-      return this.isActive;
-    }
-  },
   methods: {
+    convertStringToArr(tags) {
+      if (typeof tags === "object") {
+        return tags;
+      }
+      let tagsArr = [];
+      let currentTag = "";
+      for (let i of tags) {
+        if (i === ',') {
+          tagsArr.push(currentTag);
+          currentTag = ""
+        } else if (currentTag.length) {
+          currentTag += i;
+        } else {
+          if (i !== ';' && i !== ' ' && i !== '.' && i !== '\n') {
+            currentTag += i;
+          }
+        }
+      }
+      if (currentTag.length) {
+        tagsArr.push(currentTag);
+      }
+      console.log(tagsArr);
+      return tagsArr;
+    },
     closeWindow() {
+      if (this.areAllFieldsEmpty && this.lessonNumber !== -1) {
+        this.$emit("deleteLesson", {
+          lessonIndex: this.lessonNumber
+        })
+      }
       router.replace("/");
       this.$emit("closeWindow");
     },
     changePost() {
+      this.newPost.tags = this.convertStringToArr(this.newPost.tags);
       this.closeWindow();
     },
-    postPost() {
-      const TIME = new Date();
-      let ID = TIME.getTime() % 1024;
+    addPost() {
+      const ID = new Date().getTime();
+      let tagAr = this.convertStringToArr(this.newPost.tags);
       this.$store.state.LessonsList.push({
         body: this.newPost.body,
         header: this.newPost.header,
         id: ID,
-        tags: []
+        tags: tagAr,
       });
       this.closeWindow();
     },
     doPost() {
+      if (this.areAllFieldsEmpty) {
+        this.closeWindow();
+      }
+      if (this.areAllFieldsNotEmpty) {
+        document.getElementById('alert').style.background = "yellow";
+        setTimeout(() => {
+          if (document.getElementById('alert')) {
+            document.getElementById('alert').style.background = ""
+          }
+        }, 400)
+        return;
+      }
       if (this.lessonNumber === -1) {
-        this.postPost();
+        this.addPost();
       } else {
         this.changePost();
       }
@@ -103,14 +154,22 @@ export default {
       }
     }
   },
+  computed: {
+    areAllFieldsNotEmpty() {
+      return !(this.newPost.body.length && this.newPost.header.length && this.newPost.tags.length);
+    },
+    areAllFieldsEmpty() {
+      return (!this.newPost.body.length && !this.newPost.header.length && !this.newPost.tags.length);
+    }
+  },
   data() {
     return {
       currentId: 0,
       newPost: {
         body: [],
-        header: ""
+        header: "",
+        tags: []
       },
-      helperList: [],
       startY: 0
     }
   }
@@ -118,6 +177,19 @@ export default {
 </script>
 
 <style scoped>
+.add-paragraphs {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.add-tags {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
 .main-admin-post {
   z-index: 10;
 }
@@ -134,7 +206,7 @@ export default {
   padding: 10px;
   font-family: 'Nunito', sans-serif;
   z-index: 2;
-  box-shadow: 0 0 1px #bdbdbd;
+  box-shadow: 0 4px 50px -12px rgba(17, 12, 46, 0.16);
 }
 
 textarea {
@@ -231,5 +303,15 @@ footer h3:hover {
 
 .light-input {
   background-color: white;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity .2s;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>

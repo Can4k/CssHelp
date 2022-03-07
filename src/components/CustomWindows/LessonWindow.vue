@@ -70,7 +70,7 @@ export default {
   border-radius: 10px;
   padding: 10px;
   font-family: 'Nunito', sans-serif;
-  box-shadow: 0 0 1px #bdbdbd;
+  box-shadow: 0 4px 50px -12px rgba(17, 12, 46, 0.16);
 }
 
 .information-content h2 {
