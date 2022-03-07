@@ -37,7 +37,7 @@
 
         <div class="theory-header">
           <h2 :class="[this.$store.state.isDarkTheme? 'dark-h2' : 'none']">Список всей теории</h2>
-          <span @click="openAdmin({lessonIndex: -1})">
+          <span v-show="this.$store.state.isUserAdmin" @click="openAdmin({lessonIndex: -1})">
             <new-theory-button style="margin-top: 8px"/>
           </span>
         </div>
@@ -157,6 +157,11 @@ export default {
       setTimeout(() => {
         document.getElementsByClassName('information-content')[0].style.top = (window.scrollY + 20).toString() + "px";
       }, 10)
+    },
+    userVerification() {
+      if (localStorage.getItem('isAdmin') === 'true') {
+        this.$store.state.isUserAdmin = true;
+      }
     }
   },
   data() {
@@ -170,6 +175,7 @@ export default {
     }
   },
   mounted() {
+    this.userVerification();
     this.currentLessonList = this.$store.state.LessonsList;
     this.updateList();
     if (!this.isAdminOpen && useRoute().query.admin === 'true') {

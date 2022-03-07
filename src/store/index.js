@@ -5,6 +5,7 @@ export default createStore({
         deviceWidth: 0,
         isDarkTheme: false,
         isProduction: false,
+        isUserAdmin: false,
         LessonsList:
             [
                 {

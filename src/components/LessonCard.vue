@@ -2,7 +2,7 @@
   <div class="lesson-card" :class="[this.$store.state.isDarkTheme? 'dark' : 'none']" @click="openLesson">
     <div class="content-content">
       <strong>{{ currentObject.header }}</strong>
-      <span>
+      <span v-show="this.$store.state.isUserAdmin">
         <img
             style="background-color: #42b983"
             @click.stop="changeClicked"
