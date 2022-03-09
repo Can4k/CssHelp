@@ -81,8 +81,9 @@ export default {
 }
 
 .dark {
-  background-color: #292F2F;
+  background-color: #0b1117;
   color: #b0b7b6;
+  box-shadow: 0 4px 50px 10px rgba(255, 255, 255, 0.05);
 }
 
 .light:hover {

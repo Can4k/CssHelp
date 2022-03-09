@@ -1,7 +1,7 @@
 <template>
   <div @click="clicked" class="theme-button-container" :class="[this.$store.state.isDarkTheme? 'dark' : 'white']">
-    <img v-if="this.$store.state.isDarkTheme" src="@/assets/sun.svg" alt="В ДЕНЬ">
-    <img v-else src="@/assets/moon.svg" alt="В ДЕНЬ">
+    <img v-show="this.$store.state.isDarkTheme" src="@/assets/sun.svg" alt="В ДЕНЬ">
+    <img v-show="!this.$store.state.isDarkTheme" src="@/assets/moon.svg" alt="В ДЕНЬ">
   </div>
 </template>
 

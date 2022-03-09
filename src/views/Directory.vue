@@ -1,4 +1,4 @@
-<template>
+<template v-show="false">
   <div class="main-container">
 
     <transition :name="this.$store.state.deviceWidth > 700? 'alert' : 'alert-smart'">
@@ -59,7 +59,7 @@
       </div>
     </transition>
   </div>
-  <div class="change-theme" style="margin-right: 10px">
+  <div class="change-theme" style="margin-right: 10px" :class="this.$store.state.isDarkTheme? 'dark-panel' : 'light-panel'">
     <theme-button @changeTheme="changeTheme" style="margin-right: 10px"/>
     <a style="display: flex; justify-content: center; align-items: center" href="https://github.com/Can4k/helper228" target="_blank">
       <img class="github" src="@/assets/github.svg" alt="123"/>
@@ -230,6 +230,7 @@ export default {
   padding: 5px;
   box-shadow: 0 4px 50px -5px rgba(17, 12, 46, 0.16);
   border-radius: 10px;
+  user-select: none;
 }
 
 a:visited {
@@ -299,5 +300,9 @@ a {
 
 .content-list {
   transition-duration: 0s;
+}
+.dark-panel {
+  background-color: #0b1117;
+  box-shadow: 0 4px 50px -15px white;
 }
 </style>

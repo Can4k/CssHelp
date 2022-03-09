@@ -75,8 +75,8 @@ export default {
   transition-duration: .1s;
 }
 .dark {
-  background-color: #292F2F;
-  color: black;
+  background-color: #0b1117;
+  box-shadow: 0 4px 50px -12px rgba(166, 163, 187, 0.16);
 }
 .off-dark {
   background-color: #4c5656;
