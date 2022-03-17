@@ -1,6 +1,5 @@
 <template v-show="false">
   <div class="main-container">
-
     <transition :name="this.$store.state.deviceWidth > 700? 'alert' : 'alert-smart'">
       <alert-component
           v-show="this.$store.state.isAdminOpen"
@@ -29,11 +28,22 @@
       />
     </transition>
 
-    <transition name="main-fade">
-      <div class="content-list" :style="[(isAdminOpen || isLessonOpen)? 'opacity: 0.05' : '']">
+    <transition name="fade">
+      <auntification
+          :is-auth-window-active="isLoginOpen"
+          @closeWindow="closeLogin()"
+          @auth="this.userVerification"
+      />
+    </transition>
 
-        <h2 style="margin-top: 30px" :class="[this.$store.state.isDarkTheme? 'dark-h2' : 'none']">Фильтр тегов</h2>
-        <searcher @updateList="updateList"/>
+    <transition name="main-fade">
+      <div class="content-list" :style="[(isAdminOpen || isLessonOpen || isLoginOpen)? 'opacity: 0.05' : '']">
+        <h2 style="margin-top: 40px" :class="[this.$store.state.isDarkTheme? 'dark-h2' : 'none']">Фильтр тегов</h2>
+
+        <searcher
+            @updateList="updateList"
+            @openControl="openControl"
+        />
 
         <div class="theory-header">
           <h2 :class="[this.$store.state.isDarkTheme? 'dark-h2' : 'none']">Список всей теории</h2>
@@ -59,12 +69,38 @@
       </div>
     </transition>
   </div>
+
   <div class="change-theme" style="margin-right: 10px" :class="this.$store.state.isDarkTheme? 'dark-panel' : 'light-panel'">
-    <theme-button @changeTheme="changeTheme" style="margin-right: 10px"/>
     <a style="display: flex; justify-content: center; align-items: center" href="https://github.com/Can4k/helper228" target="_blank">
-      <img class="github" src="@/assets/github.svg" alt="123"/>
+      <img
+          class="github"
+          src="@/assets/github.svg"
+          alt="github"
+          style="margin-right: 10px"
+      />
     </a>
+    <theme-button
+        @changeTheme="changeTheme"
+        style="margin-right: 9px"
+    />
+    <login-button
+        @login="openLogin"
+        @logout="logout"
+    />
   </div>
+
+  <transition name="fade">
+    <alert-component
+        v-show="this.currentWrong"
+        type="warn"
+        text="Неверный логин или пароль"/>
+  </transition>
+
+  <transition name="fade">
+    <h3 v-if="isControlOpen">
+      в разработке
+    </h3>
+  </transition>
 </template>
 
 <script>
@@ -76,13 +112,20 @@ import NewTheoryButton from "@/components/CustomButtons/NewTheoryButton";
 import AlertComponent from "@/components/CustomWindows/AlertComponent";
 import AdminWindow from "@/components/CustomWindows/AdminPostWindow";
 import {useRoute} from "vue-router";
+import LoginButton from "@/components/CustomButtons/LoginButton";
+import Auntification from "@/components/CustomWindows/authWindow/AuthWindow";
+import TagControlWindow from "@/components/CustomWindows/TagControlWindow";
 
 export default {
   name: "Directory",
-  components: {AdminWindow, AlertComponent, NewTheoryButton, ThemeButton, Searcher, LessonWindow, LessonCard},
+  components: {
+    TagControlWindow,
+    LoginButton, AdminWindow, AlertComponent, NewTheoryButton,
+    ThemeButton, Searcher, LessonWindow, LessonCard, Auntification
+  },
   methods: {
     openWindow(data) {
-      if (this.isLessonOpen || this.isAdminOpen) {
+      if (this.isLessonOpen || this.isAdminOpen || this.isLoginOpen) {
         return;
       }
       this.selectedNumber = data.lessonIndex;
@@ -119,10 +162,11 @@ export default {
     },
     changeTheme() {
       this.$store.state.isDarkTheme = !this.$store.state.isDarkTheme;
-      document.body.style.background = this.$store.state.isDarkTheme ? '#0b1117' : this.isLessonOpen || this.isAdminOpen ? this.adminBackground : 'white';
+      document.body.style.background = this.$store.state.isDarkTheme ? '#0b1117' :
+          this.isLessonOpen || this.isAdminOpen || this.isLoginOpen? this.adminBackground : 'white';
     },
     openAdmin(data) {
-      if (this.isLessonOpen || this.isAdminOpen) {
+      if (this.isLessonOpen || this.isAdminOpen || this.isLoginOpen) {
         return;
       }
       if (!this.$store.state.isDarkTheme) {
@@ -161,25 +205,67 @@ export default {
         document.getElementsByClassName('information-content')[0].style.top = (window.scrollY + 20).toString() + "px";
       }, 1)
     },
-    userVerification() {
-      if (localStorage.getItem('isAdmin') === 'true') {
-        document.title = "CSS helper Admin"
-        this.$store.state.isUserAdmin = true;
+    userVerification(data) {
+      if (this.$store.state.isProduction) {
+
+      } else {
+        if (data.currentLogin === "123" && data.currentPassword === "123") {
+          this.$store.state.isUserAdmin = true;
+          document.title = "CSS Help, admin"
+        } else {
+          this.$store.state.isUserAdmin = false;
+          this.currentWrong = true;
+          setTimeout(() => {this.currentWrong = false}, 1000);
+        }
+        this.closeLogin();
       }
+    },
+    openLogin() {
+      this.isLoginOpen = true;
+      if (!this.$store.state.isDarkTheme) {
+        document.body.style.backgroundColor = this.adminBackground;
+      }
+    },
+    closeLogin() {
+      if (!this.$store.state.isDarkTheme) {
+        document.body.style.backgroundColor = "white";
+      }
+      this.isLoginOpen = false;
+    },
+    openControl() {
+      if (this.isLessonOpen || this.isAdminOpen || this.isLoginOpen) {
+        return;
+      }
+      if (!this.$store.state.isDarkTheme) {
+        document.body.style.backgroundColor = this.adminBackground;
+      }
+      this.isControlOpen = true;
+    },
+    closeControl() {
+      if (!this.$store.state.isDarkTheme) {
+        document.body.style.backgroundColor = "white";
+      }
+    },
+    logout() {
+      this.$store.state.isUserAdmin = false;
+      document.title = "CSS Help";
     }
   },
   data() {
     return {
       isLessonOpen: false,
       isAdminOpen: false,
+      isLoginOpen: false,
+      isControlOpen: false,
       selectedNumber: 0,
       currentLessonList: {},
       currentTagsList: [],
+      currentWrong: false,
       adminBackground: 'rgb(234,241,248)',
     }
   },
   mounted() {
-    this.userVerification();
+    //this.userVerification();
     this.currentLessonList = this.$store.state.LessonsList;
     this.updateList();
     if (!this.isAdminOpen && useRoute().query.admin === 'true') {
@@ -303,6 +389,7 @@ a {
 }
 .dark-panel {
   background-color: #0b1117;
-  box-shadow: 0 4px 50px -15px white;
+  box-shadow: 0 0 50px -22px rgba(149, 169, 160, 0.13);
+  border: 1px solid rgba(255, 255, 255, 0.06);
 }
 </style>

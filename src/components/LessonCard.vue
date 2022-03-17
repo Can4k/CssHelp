@@ -83,7 +83,8 @@ export default {
 .dark {
   background-color: #0b1117;
   color: #b0b7b6;
-  box-shadow: 0 4px 50px 10px rgba(255, 255, 255, 0.05);
+  box-shadow: 0 0 50px -22px rgba(149, 169, 160, 0.13);
+  border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .light:hover {
@@ -92,7 +93,7 @@ export default {
 }
 
 .dark:hover {
-  background-color: #5c6464;
+  background-color: rgba(41, 47, 47, 0.13);
   cursor: pointer;
 }
 

@@ -16,7 +16,7 @@ export default {
 
 <style scoped>
 .alert-container {
-  z-index: 5;
+  z-index: 20;
   font-size: 15px;
   position: fixed;
   border-radius: 5px;

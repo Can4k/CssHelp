@@ -7,13 +7,19 @@
                 : 'off-dark' : tag.isActive? 'on-light' : 'off-light']">{{tag.name}}
         </strong>
     </span>
+    <new-tag-button
+        v-show="this.$store.state.isUserAdmin"
+        @click="openTagControl"
+    />
     </div>
   </div>
 </template>
 
 <script>
+import NewTagButton from "@/components/CustomButtons/NewTagButton";
 export default {
   name: "Searcher",
+  components: {NewTagButton},
   data() {
     return {
       activeTags: {}
@@ -26,6 +32,9 @@ export default {
     tagClicked(data) {
       data.isActive = !data.isActive;
       this.$emit("updateList");
+    },
+    openTagControl() {
+      this.$emit("openControl");
     }
   }
 }
@@ -76,7 +85,8 @@ export default {
 }
 .dark {
   background-color: #0b1117;
-  box-shadow: 0 4px 50px -12px rgba(166, 163, 187, 0.16);
+  box-shadow: 0 0 50px -22px rgba(149, 169, 160, 0.13);
+  border: 1px solid rgba(255, 255, 255, 0.06);
 }
 .off-dark {
   background-color: #4c5656;
