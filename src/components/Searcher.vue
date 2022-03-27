@@ -86,6 +86,8 @@ export default {
 .dark {
   background-color: #0b1117;
   box-shadow: 0 0 50px -22px rgba(149, 169, 160, 0.13);
+}
+.dark, .light {
   border: 1px solid rgba(255, 255, 255, 0.06);
 }
 .off-dark {

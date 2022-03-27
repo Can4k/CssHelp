@@ -2,18 +2,24 @@
   <div class="main-admin-post">
 
     <transition name="fade">
-      <alert-component id="alert" v-show="this.areAllFieldsNotEmpty && !this.areAllFieldsEmpty"
-                       text="Все поля должны быть заполнены" :type="'warn'"/>
+      <alert-component
+          id="alert"
+          v-show="this.areAllFieldsNotEmpty && !this.areAllFieldsEmpty"
+          text="Все поля должны быть заполнены" :type="'warn'"/>
     </transition>
 
     <div class="information-content" :class="this.$store.state.isDarkTheme? 'dark' : 'light'" style="top: 10px">
-      <h2>Добавление тела теории</h2>
-      <h3 class="mrg">Заголовок</h3>
+      <h3 style="margin-bottom: 5px">Тело теории</h3>
+      <strong
+          style="font-size: 10px; margin-bottom: 4px;"
+      >Заголовок вашей памятки</strong>
       <textarea v-model="newPost.header" placeholder="Заголовок" class="header-input"
                 :class="[this.$store.state.isDarkTheme? 'dark-input' : 'light-input']"/>
 
       <div class="add-paragraphs">
-        <h3 class="mrg">Абзацы</h3>
+        <strong
+            style="font-size: 10px; margin: 10px"
+        >Абзацы вашей памятки, каждый новый абзац начинается с новой строчки.</strong>
         <div v-for="i in newPost.body.length">
           <b>
             <textarea
@@ -24,15 +30,25 @@
             />
           </b>
         </div>
-        <div class="plus-button">
-          <h4 @click="addParagraph">Добавить абзац</h4>
-          <h4 style="background-color: #e16969; margin-left: 5px" @click="removeParagraph">Удалить абзац</h4>
-        </div>
+        <span>
+          <img
+              class="plus-button"
+              @click="addParagraph"
+              src="@/assets/plus-circle.svg"
+              alt="+"
+          >
+          <img
+              alt="-"
+              class="plus-button"
+              @click="removeParagraph"
+              src="@/assets/minus-circle.svg"
+          >
+        </span>
       </div>
 
       <div class="add-tags">
-        <h3 class="mrg">Тэги</h3>
-        <strong style="font-size: 10px">введите нужные теги через запятую без пробела</strong>
+        <h3>Тэги</h3>
+        <strong style="font-size: 10px">Введите тэги вашей памятки через запятую</strong>
         <textarea
             v-model="newPost.tags"
             class="par-input"
@@ -42,7 +58,7 @@
 
       <footer>
         <div class="ok-button" @click="doPost">
-          <h3>ОК</h3>
+          <h3 :style="[this.$store.state.isDarkTheme? 'color: #0b1117' : 'color: white']">ОК</h3>
         </div>
       </footer>
     </div>
@@ -204,6 +220,7 @@ export default {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  margin-top: 10px;
 }
 
 .main-admin-post {
@@ -233,7 +250,7 @@ textarea {
 .header-input {
   font-size: 15px;
   border: 2px solid black;
-  border-radius: 10px;
+  border-radius: 4px;
   padding: 4px;
   width: 340px;
   height: 70px;
@@ -243,16 +260,12 @@ textarea {
 .par-input {
   margin-top: 3px;
   font-size: 12px;
+  border-radius: 4px;
   border: 1px solid black;
-  border-radius: 10px;
   padding: 5px;
   width: 340px;
-  height: 50px;
+  height: 100px;
   min-height: 30px;
-}
-
-.information-content h2 {
-  margin-bottom: 5px;
 }
 
 .information-content b {
@@ -260,7 +273,7 @@ textarea {
 }
 
 .mrg {
-  margin: 10px;
+  margin: 10px 0 5px 0;
 }
 
 .information-content footer {
@@ -268,44 +281,40 @@ textarea {
   justify-content: center;
 }
 
-footer h3 {
-  background-color: #008cff;
-  color: white;
-  padding: 2px 10px 2px 10px;
-  border-radius: 4px;
-  user-select: none;
-  transition-duration: .2s;
-  font-size: 15px;
-  margin-top: 30px;
-}
 
 .plus-button {
-  display: flex;
-  margin: 3px;
   cursor: pointer;
   user-select: none;
+  transition-duration: .1s;
+  width: 25px;
+  margin: 0 2px 0 2px;
 }
 
-.plus-button h4 {
-  text-align: right;
+.plus-button:hover {
+  transform: scale(1.1);
+}
+
+footer h3 {
   background-color: #42b983;
-  font-size: 12px;
-  padding: 2px;
-  border-radius: 4px;
-}
-
-.plus-button h4:hover {
-  transform: translate(1px);
+  box-shadow: 0 4px 50px -12px rgba(17, 12, 46, 0.16);
+  border: 1px solid rgba(196, 187, 187, 0.24);
+  color: white;
+  padding: 2px 20px 2px 20px;
+  border-radius: 5px;
+  margin-top: 10px;
+  user-select: none;
+  font-size: 15px;
+  transition-duration: .2s;
 }
 
 footer h3:hover {
-  transform: scale(1.05);
+  background-color: rgba(66, 185, 131, 0.76);
   cursor: pointer;
 }
 
 .dark {
-  background-color: #292F2F;
-  color: white;
+  background-color: #080b10;
+  color: #8e9a9a;
 }
 
 .light {
@@ -313,7 +322,7 @@ footer h3:hover {
 }
 
 .dark-input {
-  background-color: black;
+  background-color: #0b1117;
   color: #8e9a9a;
 }
 

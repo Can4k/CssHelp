@@ -1,12 +1,11 @@
 <template>
-  <transition name="fade" v-show="isAuthWindowActive">
     <div class="container-container">
       <div class="information-content" :class="[this.$store.state.isDarkTheme? 'dark' : 'light']">
         <close-button @closeClicked="closeWindow"/>
         <h2>Авторизация</h2>
         <input
             class="inp"
-            placeholder="Login"
+            placeholder="Логин"
             v-model = "this.currentLogin"
             :class="[this.$store.state.isDarkTheme? 'dark' : 'light']"
         >
@@ -15,7 +14,7 @@
               :class="[this.$store.state.isDarkTheme? 'dark' : 'light']"
               class="password inp"
               :type="isPasswordShow? 'text' : 'password'"
-              placeholder="Password"
+              placeholder="Пароль"
               v-model="this.currentPassword"
           >
           <change-pass-mode
@@ -30,7 +29,6 @@
         </footer>
       </div>
     </div>
-  </transition>
 </template>
 
 <script>
@@ -38,8 +36,15 @@ import ChangePassMode from "./Buttons/changePassModeButton";
 import CloseButton from "./Buttons/closeButton";
 import AlertComponent from "@/components/CustomWindows/AlertComponent";
 export default {
-  name: "auntification.vue",
+  name: "AuthWindow.vue",
   components: {AlertComponent, CloseButton, ChangePassMode},
+  mounted() {
+    this.startY = scrollY;
+    window.addEventListener("scroll", this.blockScroll);
+  },
+  unmounted() {
+    window.removeEventListener("scroll", this.blockScroll);
+  },
   methods: {
     auth() {
       this.$emit("auth", {
@@ -50,16 +55,19 @@ export default {
     },
     closeWindow() {
       this.$emit("closeWindow");
+    },
+    blockScroll() {
+      if (this.startY > scrollY) {
+        window.scroll({top: this.startY, behavior: "auto"})
+      }
     }
-  },
-  props: {
-    isAuthWindowActive: Boolean
   },
   data() {
     return {
       isPasswordShow: false,
       currentPassword: "",
-      currentLogin: ""
+      currentLogin: "",
+      startY: 0
     }
   }
 }
@@ -77,7 +85,6 @@ export default {
 }
 
 .information-content {
-  top: 100px;
   width: 400px;
   margin-top: 50px;
   position: absolute;
@@ -91,15 +98,6 @@ export default {
   border: 1px solid rgba(196, 187, 187, 0.24);
 }
 
-.show-pass {
-  cursor: pointer;
-  width: 18px;
-  height: 18px;
-  border-radius: 3px;
-  position: absolute;
-  top: 154px;
-  right: 21px;
-}
 
 .inp {
   box-shadow: 0 4px 10px -5px rgba(17, 12, 46, 0.07);

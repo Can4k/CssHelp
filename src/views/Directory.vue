@@ -30,7 +30,7 @@
 
     <transition name="fade">
       <auntification
-          :is-auth-window-active="isLoginOpen"
+          v-if="isLoginOpen"
           @closeWindow="closeLogin()"
           @auth="this.userVerification"
       />
@@ -111,7 +111,6 @@ import ThemeButton from "@/components/CustomButtons/ThemeButton";
 import NewTheoryButton from "@/components/CustomButtons/NewTheoryButton";
 import AlertComponent from "@/components/CustomWindows/AlertComponent";
 import AdminWindow from "@/components/CustomWindows/AdminPostWindow";
-import {useRoute} from "vue-router";
 import LoginButton from "@/components/CustomButtons/LoginButton";
 import Auntification from "@/components/CustomWindows/authWindow/AuthWindow";
 import TagControlWindow from "@/components/CustomWindows/TagControlWindow";
@@ -160,7 +159,14 @@ export default {
         }
       }
     },
-    changeTheme() {
+    changeTheme(flag = false) {
+      if (!flag) {
+        if (localStorage['theme_mode'] === 'dark') {
+          localStorage['theme_mode'] = 'light';
+        } else {
+          localStorage['theme_mode'] = 'dark';
+        }
+      }
       this.$store.state.isDarkTheme = !this.$store.state.isDarkTheme;
       document.body.style.background = this.$store.state.isDarkTheme ? '#0b1117' :
           this.isLessonOpen || this.isAdminOpen || this.isLoginOpen? this.adminBackground : 'white';
@@ -177,6 +183,7 @@ export default {
       this.correctWindow();
     },
     closeAdmin() {
+      this.updateLessonListOnServer();
       this.isAdminOpen = false;
       if (!this.$store.state.isDarkTheme) {
         document.body.style.backgroundColor = "white";
@@ -199,11 +206,12 @@ export default {
       this.$store.state.LessonsList = newList;
       this.currentLessonList = newCurrentList;
       this.updateList();
+      this.updateLessonListOnServer();
     },
     correctWindow() {
       setTimeout(() => {
         document.getElementsByClassName('information-content')[0].style.top = (window.scrollY + 20).toString() + "px";
-      }, 1)
+      }, 0.1)
     },
     userVerification(data) {
       if (this.$store.state.isProduction) {
@@ -211,7 +219,8 @@ export default {
       } else {
         if (data.currentLogin === "123" && data.currentPassword === "123") {
           this.$store.state.isUserAdmin = true;
-          document.title = "CSS Help, admin"
+          document.title = "CSS Help, admin";
+          localStorage['hashid'] = 'fbb344321e3985504d1df12778643070';
         } else {
           this.$store.state.isUserAdmin = false;
           this.currentWrong = true;
@@ -225,6 +234,7 @@ export default {
       if (!this.$store.state.isDarkTheme) {
         document.body.style.backgroundColor = this.adminBackground;
       }
+      this.correctWindow();
     },
     closeLogin() {
       if (!this.$store.state.isDarkTheme) {
@@ -233,6 +243,7 @@ export default {
       this.isLoginOpen = false;
     },
     openControl() {
+      return;
       if (this.isLessonOpen || this.isAdminOpen || this.isLoginOpen) {
         return;
       }
@@ -247,9 +258,34 @@ export default {
       }
     },
     logout() {
-      this.$store.state.isUserAdmin = false;
-      document.title = "CSS Help";
-    }
+      localStorage['hashid'] = '';
+      location.reload();
+    },
+    async getLessonList() {
+      let json = {};
+      let response = await fetch('https://intense-plateau-14086.herokuapp.com', {
+        method: 'GET'
+      });
+      if (response.ok) {
+        json = await response.json();
+      }
+      this.$store.state.LessonsList = json;
+      this.updateList();
+    },
+    async updateLessonListOnServer() {
+      let response = await fetch('https://intense-plateau-14086.herokuapp.com', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json;charset=utf-8'
+        },
+        body: JSON.stringify(this.$store.state.LessonsList)
+      })
+
+      if (response.ok) {
+        let json = await response.json();
+        console.log(json);
+      }
+    },
   },
   data() {
     return {
@@ -265,13 +301,18 @@ export default {
     }
   },
   mounted() {
-    //this.userVerification();
-    this.currentLessonList = this.$store.state.LessonsList;
-    this.updateList();
-    if (!this.isAdminOpen && useRoute().query.admin === 'true') {
-      this.openAdmin({});
+    if (localStorage['hashid'] === 'fbb344321e3985504d1df12778643070') {
+      this.$store.state.isUserAdmin = true;
+      document.title = "CSS Help, admin";
     }
-  },
+    this.getLessonList();
+    if (localStorage['theme_mode'] === 'dark') {
+      this.changeTheme(true);
+    } else {
+      localStorage['theme_mode'] = 'light';
+    }
+    this.currentLessonList = this.$store.state.LessonsList;
+  }
 }
 </script>
 

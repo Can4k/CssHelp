@@ -1,5 +1,5 @@
 <template>
-  <div class="lesson-card" :class="[this.$store.state.isDarkTheme? 'dark' : 'none']" @click="openLesson">
+  <div class="lesson-card" :class="[this.$store.state.isDarkTheme? 'dark' : 'light']" @click="openLesson">
     <div class="content-content">
       <strong>{{ currentObject.header }}</strong>
       <span v-show="this.$store.state.isUserAdmin">
@@ -10,7 +10,7 @@
             alt="change"
         >
       <img
-          style="background-color: rgba(255,103,103,0.82)"
+          style="background-color: #FF6767D1"
           @click.stop="deleteLesson"
           src="@/assets/trash.svg"
           alt="change"
@@ -82,14 +82,17 @@ export default {
 
 .dark {
   background-color: #0b1117;
-  color: #b0b7b6;
+  color: #909695;
   box-shadow: 0 0 50px -22px rgba(149, 169, 160, 0.13);
-  border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .light:hover {
-  background-color: #d8d8e1;
+  background-color: rgba(220, 205, 205, 0.15);
   cursor: pointer;
+}
+
+.dark, .light {
+  border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .dark:hover {

@@ -7,7 +7,7 @@
       </div>
       <footer>
         <div class="ok-button" @click="closeLesson">
-          <h3>ОК</h3>
+          <h3 :style="[this.$store.state.isDarkTheme? 'color: black' : 'color: white']">ОК</h3>
         </div>
       </footer>
     </div>
@@ -45,7 +45,7 @@ export default {
       this.$emit("closeLesson");
     },
     blockScroll() {
-      if (this.startY > scrollY && this.isActive) {
+      if (this.startY > scrollY) {
         window.scroll({top: this.startY, behavior: "auto"})
       }
     }
@@ -70,12 +70,11 @@ export default {
   border-radius: 10px;
   padding: 10px;
   font-family: 'Nunito', sans-serif;
-  box-shadow: 0 4px 50px -12px rgba(17, 12, 46, 0.16);
 }
 
 .information-content h2 {
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 5px;
 }
 
 .information-content b {
@@ -90,28 +89,31 @@ export default {
 .light {
   color: black;
   background-color: white;
+  box-shadow: 0 4px 50px -12px rgba(17, 12, 46, 0.16);
 }
 
 .dark {
-  color: #b0b7b6;
-  background-color: #1f1f1f;
+  background-color: #0b1117;
+  color: #909695;
+  box-shadow: 0 0 50px -22px rgba(149, 169, 160, 0.13);
+  border: 2px solid rgba(255, 255, 255, 0.06);
 }
 
 .content-line {
-  margin-bottom: 10px;
+  margin-bottom: 7px;
 }
 
 footer h3 {
-  background-color: #008cff;
-  color: white;
-  padding: 2px 20px 2px 20px;
+  font-size: 15px;
+  background-color: #42b983;
+  padding: 1px 10px 1px 10px;
   border-radius: 5px;
   margin-top: 10px;
   user-select: none;
 }
 
 footer h3:hover {
-  transform: scale(1.05);
+  padding: 1px 12px 1px 12px;
   cursor: pointer;
 }
 
