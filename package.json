@@ -9,6 +9,7 @@
   "dependencies": {
     "feather-icons": "^4.28.0",
     "firebase": "^9.6.6",
+    "mitt": "^3.0.0",
     "npm-git-install": "^0.3.0",
     "vue": "^3.0.0",
     "vue-router": "^4.0.0-0",

@@ -1,13 +1,11 @@
 <template>
   <div class="main-admin-post">
-
     <transition name="fade">
       <alert-component
           id="alert"
           v-show="this.areAllFieldsNotEmpty && !this.areAllFieldsEmpty"
           text="Все поля должны быть заполнены" :type="'warn'"/>
     </transition>
-
     <div class="information-content" :class="this.$store.state.isDarkTheme? 'dark' : 'light'" style="top: 10px">
       <h3 style="margin-bottom: 5px">Тело теории</h3>
       <strong

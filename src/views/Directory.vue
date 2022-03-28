@@ -29,6 +29,13 @@
     </transition>
 
     <transition name="fade">
+      <tag-control-window
+          v-if="isControlOpen"
+          @closeControl="closeTagList"
+      />
+    </transition>
+
+    <transition name="fade">
       <auntification
           v-if="isLoginOpen"
           @closeWindow="closeLogin()"
@@ -37,12 +44,11 @@
     </transition>
 
     <transition name="main-fade">
-      <div class="content-list" :style="[(isAdminOpen || isLessonOpen || isLoginOpen)? 'opacity: 0.05' : '']">
+      <div class="content-list" :style="[(isAdminOpen || isLessonOpen || isLoginOpen || isControlOpen)? 'opacity: 0.05' : '']">
         <h2 style="margin-top: 40px" :class="[this.$store.state.isDarkTheme? 'dark-h2' : 'none']">Фильтр тегов</h2>
-
         <searcher
             @updateList="updateList"
-            @openControl="openControl"
+            @openTagControl="openControl"
         />
 
         <div class="theory-header">
@@ -93,13 +99,8 @@
     <alert-component
         v-show="this.currentWrong"
         type="warn"
-        text="Неверный логин или пароль"/>
-  </transition>
-
-  <transition name="fade">
-    <h3 v-if="isControlOpen">
-      в разработке
-    </h3>
+        text="Неверный логин или пароль"
+    />
   </transition>
 </template>
 
@@ -124,7 +125,7 @@ export default {
   },
   methods: {
     openWindow(data) {
-      if (this.isLessonOpen || this.isAdminOpen || this.isLoginOpen) {
+      if (this.isLessonOpen || this.isAdminOpen || this.isLoginOpen || this.isControlOpen) {
         return;
       }
       this.selectedNumber = data.lessonIndex;
@@ -217,10 +218,10 @@ export default {
       if (this.$store.state.isProduction) {
 
       } else {
-        if (data.currentLogin === "123" && data.currentPassword === "123") {
+        if (data.currentLogin === "borya" && data.currentPassword === "snusoed") {
           this.$store.state.isUserAdmin = true;
           document.title = "CSS Help, admin";
-          localStorage['hashid'] = 'fbb344321e3985504d1df12778643070';
+          localStorage['hashid'] = 'fbb344321e3985504d1df12718643070';
         } else {
           this.$store.state.isUserAdmin = false;
           this.currentWrong = true;
@@ -243,7 +244,6 @@ export default {
       this.isLoginOpen = false;
     },
     openControl() {
-      return;
       if (this.isLessonOpen || this.isAdminOpen || this.isLoginOpen) {
         return;
       }
@@ -261,6 +261,12 @@ export default {
       localStorage['hashid'] = '';
       location.reload();
     },
+    closeTagList(data) {
+      this.$store.state.activeTags = data.tags; this.isControlOpen = false;
+      if (!this.$store.state.isDarkTheme) {
+        document.body.style.backgroundColor = "white";
+      }
+    },
     async getLessonList() {
       let json = {};
       let response = await fetch('https://intense-plateau-14086.herokuapp.com', {
@@ -273,6 +279,9 @@ export default {
       this.updateList();
     },
     async updateLessonListOnServer() {
+      if (!this.$store.state.isUserAdmin || localStorage['hashid'] !== 'fbb344321e3985504d1df12718643070') {
+        return;
+      }
       let response = await fetch('https://intense-plateau-14086.herokuapp.com', {
         method: 'POST',
         headers: {
@@ -301,7 +310,7 @@ export default {
     }
   },
   mounted() {
-    if (localStorage['hashid'] === 'fbb344321e3985504d1df12778643070') {
+    if (localStorage['hashid'] === 'fbb344321e3985504d1df12718643070') {
       this.$store.state.isUserAdmin = true;
       document.title = "CSS Help, admin";
     }

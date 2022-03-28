@@ -26,6 +26,9 @@ export default {
     }
   },
   mounted() {
+    this.emitter.on("updateTagList", () => {
+      setTimeout(() =>  this.activeTags = this.$store.state.activeTags, 5);
+    })
     this.activeTags = this.$store.state.activeTags;
   },
   methods: {
@@ -34,7 +37,7 @@ export default {
       this.$emit("updateList");
     },
     openTagControl() {
-      this.$emit("openControl");
+      this.$emit("openTagControl");
     }
   }
 }

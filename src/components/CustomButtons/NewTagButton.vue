@@ -1,5 +1,5 @@
 <template>
-  <img class="plus" src="@/assets/plus-circle.svg" alt="добавить теорию">
+  <img class="plus" src="@/assets/edit-2-green.svg" alt="добавить теорию">
 </template>
 
 <script>
@@ -12,5 +12,6 @@ export default {
 .plus {
   width: 13px;
   cursor: pointer;
+  margin-left: 5px;
 }
 </style>
